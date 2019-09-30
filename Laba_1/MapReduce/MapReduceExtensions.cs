@@ -11,7 +11,7 @@ namespace MapReduce
         {
             await MapAsync(inputFileName);
             await ShuffleAsync();
-            //await ReduceAsync();
+            await ReduceAsync();
         }
         
         public static async Task MapAsync(string inputFileName, string outputFile1 = "file1.txt", string outputFile2 = "file2.txt")
@@ -123,6 +123,11 @@ namespace MapReduce
                 while (!reader.EndOfStream)
                 {
                     var nextLine = await reader.ReadLineAsync();
+                    if (string.IsNullOrEmpty(nextLine))
+                    {
+                        continue;
+                    }
+                    
                     var nextSplitted = nextLine.Split(",");
                     var nextWord = nextSplitted[0];
 
@@ -137,7 +142,7 @@ namespace MapReduce
                         currentCountOfWord = Int32.Parse(nextSplitted[1]);
                     }
                 }
-                await writer.WriteLineAsync($"{currentWord},{currentCountOfWord}");
+                await writer.WriteAsync($"{currentWord},{currentCountOfWord}");
             }
         }
         
@@ -177,6 +182,9 @@ namespace MapReduce
                         await writerSecond.WriteLineAsync(line);
                     }
                 }
+                
+                await StreamExtensions.RemoveNewLineFromEndOfFileAsync(writerFirst);
+                await StreamExtensions.RemoveNewLineFromEndOfFileAsync(writerSecond);
             }
         }
     }
