@@ -13,7 +13,7 @@ public class MaxCountReducer extends Reducer<Text, MarketMaxValue, Text, MarketM
 
         for(MarketMaxValue maxValue: values) {
             max = maxValue.getMax();
-            count+=maxValue.getCount();
+            count += maxValue.getCount();
         }
 
         context.write(key, new MarketMaxValue(max, count));
