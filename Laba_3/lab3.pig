@@ -4,7 +4,17 @@ forex_history = LOAD 'hdfs://namenode:9000/user/root/input/dataset_example.csv' 
 					   eurchf_date:chararray, eurchf_time:chararray, eurchf_open:float, eurchf_max:float, eurchf_min:float, eurchf_close:float, eurchf_volume:float);
 
 eurusd_data = FOREACH forex_history GENERATE ToDate(eurusd_date,'yyyy.MM.dd') as new_eurusd_date, eurusd_date, eurusd_time, eurusd_open, eurusd_max, eurusd_min, eurusd_close, eurusd_volume;
+eurgbp_data = FOREACH forex_history GENERATE ToDate(eurgbp_date,'yyyy.MM.dd') as new_eurgbp_date, eurgbp_date, eurgbp_time, eurgbp_open, eurgbp_max, eurgbp_min, eurgbp_close, eurgbp_volume;
 
-filtered = FILTER eurusd_data BY (ToDate((chararray)$start_date, 'yyyyMMdd') < new_eurusd_date) AND (AddDuration(ToDate((chararray)$start_date, 'yyyyMMdd'), 'P1M') > new_eurusd_date);
+filtered_eurusd = FILTER eurusd_data BY (ToDate((chararray)$start_date, 'yyyyMMdd') < new_eurusd_date) AND (AddDuration(ToDate((chararray)$start_date, 'yyyyMMdd'), 'P1M') > new_eurusd_date) AND (eurusd_max == (float)$maxValue1);
+filtered_eurgbp = FILTER eurgbp_data BY (ToDate((chararray)$start_date, 'yyyyMMdd') < new_eurgbp_date) AND (AddDuration(ToDate((chararray)$start_date, 'yyyyMMdd'), 'P1M') > new_eurgbp_date) AND (eurgbp_max == (float)$maxValue2);
 
-STORE filtered INTO 'hdfs://namenode:9000/user/root/output/marketResult21' USING PigStorage (',');
+group_eurusd = GROUP filtered_eurusd ALL;
+group_eurgbp = GROUP filtered_eurgbp ALL;
+
+count_eurusd = FOREACH group_eurusd GENERATE 'EURUSD', COUNT(filtered_eurusd);
+count_eurgbp = FOREACH group_eurgbp GENERATE 'EURGBP', COUNT(filtered_eurgbp);
+
+result = UNION count_eurusd, count_eurgbp;
+
+STORE result INTO 'hdfs://namenode:9000/user/root/output/marketResult13' USING PigStorage (',');

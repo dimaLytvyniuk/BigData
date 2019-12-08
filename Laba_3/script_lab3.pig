@@ -21,3 +21,7 @@ STORE result INTO 'hdfs://namenode:9000/user/root/output/marketResult' USING Pig
 filtered = FILTER eurusd_data BY (ToDate((chararray)$start_date, 'yyyy.MM') < ToDate(eurusd_date,'yyyy.MM.dd')) AND (ToDate((chararray)$end_date, 'yyyy.MM') > ToDate(eurusd_date,'yyyy.MM.dd'));
 filtered = FILTER eurusd_data BY (ToDate((chararray)$start_date, 'yyyy.MM') < ToDate(eurusd_date,'yyyy.MM.dd')) AND (AddDuration(ToDate((chararray)$start_date, 'yyyy.MM'), 'P1M') > ToDate(eurusd_date,'yyyy.MM.dd'));
 
+filtered_eurusd_data = FILTER eurusd_data BY (ToDate((chararray)$start_date, 'yyyyMMdd') < new_eurusd_date) AND (AddDuration(ToDate((chararray)$start_date, 'yyyyMMdd'), 'P1M') > new_eurusd_date) AND (eurusd_max == (float)$maxValue1);
+filtered_eurgbp_data = FILTER eurgbp_data BY (ToDate((chararray)$start_date, 'yyyyMMdd') < new_eurgbp_date) AND (AddDuration(ToDate((chararray)$start_date, 'yyyyMMdd'), 'P1M') > new_eurgbp_date) AND (eurgbp_max == (float)$maxValue2);
+
+

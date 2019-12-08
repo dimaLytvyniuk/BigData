@@ -10,4 +10,4 @@ cd downloads
 tar -xzf pig-0.16.0.tar.gz
 
 cd ..
-./downloads/pig-0.16.0/bin/pig -x mapreduce script_lab3.pig
+./downloads/pig-0.16.0/bin/pig -param  start_date="20190901" -param maxValue1="1.0908" -param maxValue2="0.8852" lab3.pig
