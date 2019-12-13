@@ -1,13 +1,3 @@
-SELECT * FROM (
-SELECT 'EURUSD' as name1, COUNT(*) as count1 FROM market.forex where eurusd_date LIKE '2000.06.%' AND  eurusd_max=0.9626)
-UNION ALL(
-SELECT 'EURGBP' as name2, COUNT(*) as count2 FROM market.forex where eurgbp_date LIKE '1999.07.%' AND  eurgbp_max=0.6488);
-
-
-SELECT * FROM (
-SELECT COUNT(*)  FROM market.forex where eurusd_date LIKE '2000.06.%' AND  eurusd_max=0.9626
-UNION ALL
-SELECT COUNT(*) FROM market.forex where eurgbp_date LIKE '1999.07.%' AND  eurgbp_max=0.6488
-) lab4;
-
-SELECT SUM(CASE WHEN eurusd_date LIKE '2000.06.%' AND  eurusd_max=0.9626 THEN 1 ELSE 0 END) FROM market.forex
+SELECT SUM(CASE WHEN eurusd_date LIKE CONCAT('${hivevar:MONTH_USD}','.%') AND  eurusd_max=${hivevar:USD_MAX} THEN 1 ELSE 0 END) as eurusd_count, 
+    SUM(CASE WHEN eurgbp_date LIKE CONCAT('${hivevar:MONTH_GBP}','.%') AND  eurgbp_max=${hivevar:GBP_MAX} THEN 1 ELSE 0 END) as eurgbp_count 
+    FROM market.forex;
