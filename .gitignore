@@ -294,3 +294,5 @@ bin
 obj
 
 pig-0.16.0.tar.gz
+
+*.jar
