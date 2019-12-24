@@ -57,6 +57,32 @@
       <param>maxValue2=${eurgbpmax}</param>
 
     </pig>
+    <ok to="hive-mapreduce"/>
+    <error to="fail"/>
+  </action>
+
+  <action name="hive-mapreduce">
+    <hive xmlns="uri:oozie:hive-action:1.0">
+      <resource-manager>${resourceManager}</resource-manager>
+      <name-node>${nameNode}</name-node>
+      <prepare>
+        <delete path="${mapredHiveOutput}"/>
+        <mkdir path="${mapredHiveOutputDir}"/>
+      </prepare>
+      <configuration>
+        <property>
+          <name>mapred.job.queue.name</name>
+          <value>default</value>
+        </property>
+      </configuration>
+      <script>lab4.q</script>
+      <param>MONTH_USD=${MONTH_USD}</param>
+      <param>USD_MAX=${eurusdmax}</param>
+      <param>MONTH_GBP=${MONTH_GBP}</param>
+      <param>GBP_MAX=${eurgbpmax}</param>
+      <param>OUTPUT=${mapredHiveOutput}</param>
+    </hive>
+
     <ok to="end"/>
     <error to="fail"/>
   </action>
